@@ -1,0 +1,13 @@
+[package]
+name = "mplayer"
+version = "0.1.0"
+authors = ["BuildTools <unconfigured@null.spigotmc.org>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rodio = "0.11.0"
+tinyfiledialogs = "3.3.9"
+dirs = "2.0.2"
+walkdir = "2.3.1"
