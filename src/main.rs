@@ -5,17 +5,19 @@ use tinyfiledialogs;
 use walkdir::WalkDir;
 
 fn main() {
-    print!("[1] Play multiple songs\n[2] Play whole directory\n[3] Exit\n[1]/[2]/[3]: ");
-    std::io::stdout().flush().unwrap();
-    let mut user_input = std::string::String::new();
-    std::io::stdin().read_line(&mut user_input).unwrap();
-    if &user_input[0..1] == "1" {
-        play_many();
-    } else if &user_input[0..1] == "2" {
-        play_dir();
-    } else if &user_input[0..1] == "3" {
-        println!("Exiting...");
-        std::process::exit(0);
+    loop {
+        print!("[1] Play multiple songs\n[2] Play whole directory\n[3] Exit\n[1]/[2]/[3]: ");
+        std::io::stdout().flush().unwrap();
+        let mut user_input = std::string::String::new();
+        std::io::stdin().read_line(&mut user_input).unwrap();
+        if &user_input[0..1] == "1" {
+            play_many();
+        } else if &user_input[0..1] == "2" {
+            play_dir();
+        } else if &user_input[0..1] == "3" {
+            println!("Exiting...");
+            std::process::exit(0);
+        }
     }
 }
 
@@ -31,7 +33,7 @@ fn ask_for_exit() {
 }
 
 fn play_many() {
-    let music_files = match tinyfiledialogs::open_file_dialog_multi("Choose your songs", dirs::audio_dir().unwrap().to_str().unwrap(), Some((&["mp3"], "audio"))) {
+    let music_files = match tinyfiledialogs::open_file_dialog_multi("Choose your songs", dirs::audio_dir().unwrap().to_str().unwrap(), Some((&["*.mp3", "*.ogg", "*.wav"], "Audio Files"))) {
         Some(files) => files,
         _ => return ask_for_exit(),
     };
