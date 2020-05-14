@@ -1,4 +1,4 @@
-# Music_Player
+# Music Player
 
 ![Pretend there's a music logo here.](https://files.forsaken-borders.net/static/images/Music%20Player.png)
 
