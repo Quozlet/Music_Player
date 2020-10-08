@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 use dirs;
 use rodio;
 use std::io::{prelude::Write, BufReader};
@@ -35,7 +36,7 @@ fn ask_for_exit() {
 fn play_many() {
     let music_files = match tinyfiledialogs::open_file_dialog_multi("Choose your songs", dirs::audio_dir().unwrap().to_str().unwrap(), Some((&["*.mp3", "*.ogg", "*.wav"], "Audio Files"))) {
         Some(files) => files,
-        _ => return ask_for_exit(),
+        None => return ask_for_exit(),
     };
     let device: rodio::Device = rodio::default_output_device().unwrap();
     let sink: rodio::Sink = rodio::Sink::new(&device);
@@ -53,21 +54,21 @@ fn play_many() {
 fn play_dir() {
     let music_dir = match tinyfiledialogs::select_folder_dialog("Choose your directory", dirs::audio_dir().unwrap().to_str().unwrap()) {
         Some(files) => files,
-        _ => return ask_for_exit(),
+        None => return ask_for_exit(),
     };
     let device: rodio::Device = rodio::default_output_device().unwrap();
     let sink: rodio::Sink = rodio::Sink::new(&device);
     let walker = WalkDir::new(music_dir).follow_links(true).into_iter();
-    for song in walker.filter_entry(|dir| !dir.file_name().to_str().map(|s| s.starts_with(".")).unwrap_or(false)) {
+    for song in walker.filter_entry(|dir| !dir.file_name().to_str().map_or(false, |s| s.starts_with("."))) {
         if let Ok(file) = song {
             if let Ok(metadata) = file.metadata() {
-                if !metadata.is_dir() {
+                if metadata.is_dir() {
+                    println!("Decending into directory {}", file.file_name().to_owned().into_string().unwrap());
+                } else {
                     println!("Playing {}", file.file_name().to_owned().into_string().unwrap());
                     let file = std::fs::File::open(file.path()).unwrap();
                     sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
                     sink.sleep_until_end();
-                } else {
-                    println!("Decending into directory {}", file.file_name().to_owned().into_string().unwrap());
                 }
             }
         }
