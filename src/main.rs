@@ -1,7 +1,5 @@
-use dirs;
-use rodio;
 use std::io::{prelude::Write, BufReader};
-use tinyfiledialogs;
+
 use walkdir::WalkDir;
 
 fn main() {
@@ -58,7 +56,7 @@ fn play_dir() {
     let device: rodio::Device = rodio::default_output_device().unwrap();
     let sink: rodio::Sink = rodio::Sink::new(&device);
     let walker = WalkDir::new(music_dir).follow_links(true).into_iter();
-    for song in walker.filter_entry(|dir| !dir.file_name().to_str().map(|s| s.starts_with(".")).unwrap_or(false)) {
+    for song in walker.filter_entry(|dir| !dir.file_name().to_str().map(|s| s.starts_with('.')).unwrap_or(false)) {
         if let Ok(file) = song {
             if let Ok(metadata) = file.metadata() {
                 if !metadata.is_dir() {
@@ -67,7 +65,7 @@ fn play_dir() {
                     sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
                     sink.sleep_until_end();
                 } else {
-                    println!("Decending into directory {}", file.file_name().to_owned().into_string().unwrap());
+                    println!("Descending into directory {}", file.file_name().to_owned().into_string().unwrap());
                 }
             }
         }
